@@ -1,20 +1,6 @@
 <?php
-session_start();
-
-// Database configuration (for demo purposes)
-$db_host = 'localhost';
-$db_user = 'root';
-$db_password = '';
-$db_name = 'caanz_db';
-
 $errors = [];
 $success = '';
-
-// Check if user is already logged in
-if (isset($_SESSION['user_id'])) {
-    header('Location: dashboard.php');
-    exit();
-}
 
 // Process registration form
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

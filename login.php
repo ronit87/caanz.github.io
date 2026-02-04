@@ -49,12 +49,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+        }
+        
+        header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.3s;
+        }
+        
+        .nav-links a:hover {
+            opacity: 0.8;
+        }
+        
+        .page-content {
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 1rem;
+            padding: 2rem 1rem;
         }
         
         .container {
@@ -270,11 +314,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="login-header">
-            <h1>CAANZ</h1>
-            <p>Sign in to your account</p>
-        </div>
+    <!-- Navigation Header -->
+    <header>
+        <nav>
+            <div class="logo">CAANZ</div>
+            <ul class="nav-links">
+                <li><a href="index.html#features">Features</a></li>
+                <li><a href="index.html#about">About</a></li>
+                <li><a href="index.html#contact">Contact</a></li>
+                <li><a href="login.php">Login</a></li>
+                <li><a href="registration.php">Register</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="page-content">
+        <div class="container">
+            <div class="login-header">
+                <h1>CAANZ</h1>
+                <p>Sign in to your account</p>
+            </div>
         
         <?php if (!empty($errors)): ?>
             <div class="errors">
@@ -358,6 +417,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         <div class="home-link">
             <a href="index.html">← Back to Home</a>
+        </div>
         </div>
     </div>
 </body>
