@@ -1,20 +1,7 @@
 <?php
-session_start();
-
-// Database configuration (for demo purposes)
-$db_host = 'localhost';
-$db_user = 'root';
-$db_password = '';
-$db_name = 'caanz_db';
-
 $errors = [];
 $success = '';
-
-// Check if user is already logged in
-if (isset($_SESSION['user_id'])) {
-    header('Location: dashboard.php');
-    exit();
-}
+$login_details = null;
 
 // Process login form
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -34,47 +21,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = 'Password must be at least 8 characters';
     }
     
-    // If no validation errors, check credentials
+    // If no validation errors, display login details
     if (empty($errors)) {
-        try {
-            // Connect to database
-            $conn = new mysqli($db_host, $db_user, $db_password, $db_name);
-            
-            if ($conn->connect_error) {
-                throw new Exception('Database connection failed');
-            }
-            
-            // Query user by email
-            $stmt = $conn->prepare('SELECT id, email, password_hash FROM users WHERE email = ?');
-            $stmt->bind_param('s', $email);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            
-            if ($result->num_rows === 0) {
-                $errors[] = 'Invalid email or password';
-            } else {
-                $user = $result->fetch_assoc();
-                
-                // Verify password hash
-                if (password_verify($password, $user['password_hash'])) {
-                    // Password is correct, set session
-                    $_SESSION['user_id'] = $user['id'];
-                    $_SESSION['user_email'] = $user['email'];
-                    $_SESSION['login_time'] = time();
-                    
-                    // Redirect to dashboard
-                    header('Location: dashboard.php');
-                    exit();
-                } else {
-                    $errors[] = 'Invalid email or password';
-                }
-            }
-            
-            $stmt->close();
-            $conn->close();
-        } catch (Exception $e) {
-            $errors[] = 'An error occurred: ' . $e->getMessage();
-        }
+        $success = 'Login credentials submitted successfully!';
+        $login_details = [
+            'email' => $email,
+            'password' => $password,
+            'password_hash' => password_hash($password, PASSWORD_BCRYPT),
+            'login_time' => date('F d, Y H:i:s'),
+            'ip_address' => $_SERVER['REMOTE_ADDR'] ?? 'Unknown'
+        ];
     }
 }
 ?>
@@ -241,14 +197,75 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             text-decoration: underline;
         }
         
-        @media (max-width: 480px) {
-            .container {
-                padding: 1.5rem;
-            }
-            
-            .login-header h1 {
-                font-size: 1.5rem;
-            }
+        .details-section {
+            background: #f0f4f8;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            border: 2px solid #667eea;
+        }
+        
+        .details-section h2 {
+            color: #667eea;
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .detail-item {
+            display: grid;
+            grid-template-columns: 140px 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #ddd;
+            align-items: center;
+        }
+        
+        .detail-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .detail-label {
+            font-weight: bold;
+            color: #333;
+            font-size: 0.95rem;
+        }
+        
+        .detail-value {
+            color: #555;
+            font-size: 0.95rem;
+            word-break: break-all;
+            background: white;
+            padding: 0.5rem 0.75rem;
+            border-radius: 4px;
+        }
+        
+        .detail-password {
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: #888;
+        }
+        
+        .btn-login-again {
+            width: 100%;
+            padding: 0.75rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 1rem;
+        }
+        
+        .btn-login-again:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
     </style>
 </head>
@@ -271,6 +288,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         <?php if (!empty($success)): ?>
             <div class="success"><?php echo htmlspecialchars($success); ?></div>
+            
+            <?php if ($login_details): ?>
+                <!-- Display Login Details -->
+                <div class="details-section">
+                    <h2>Login Credentials Submitted</h2>
+                    
+                    <div class="detail-item">
+                        <span class="detail-label">Email Address:</span>
+                        <span class="detail-value"><?php echo htmlspecialchars($login_details['email']); ?></span>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <span class="detail-label">Password:</span>
+                        <span class="detail-value">••••••••</span>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <span class="detail-label">Password Hash:</span>
+                        <span class="detail-value detail-password"><?php echo htmlspecialchars($login_details['password_hash']); ?></span>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <span class="detail-label">Login Time:</span>
+                        <span class="detail-value"><?php echo htmlspecialchars($login_details['login_time']); ?></span>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <span class="detail-label">IP Address:</span>
+                        <span class="detail-value"><?php echo htmlspecialchars($login_details['ip_address']); ?></span>
+                    </div>
+                </div>
+                
+                <button type="button" class="btn-login-again" onclick="location.reload();">Login Another User</button>
+            <?php endif; ?>
         <?php endif; ?>
         
         <form method="POST" action="">
@@ -302,8 +353,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </form>
         
         <div class="login-footer">
-            <p>Don't have an account? <a href="register.php">Sign up here</a></p>
-            <p><a href="forgot-password.php">Forgot your password?</a></p>
+            <p>Don't have an account? <a href="registration.php">Sign up here</a></p>
         </div>
         
         <div class="home-link">
