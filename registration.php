@@ -28,8 +28,6 @@
         <nav>
             <div class="logo">CAANZ</div>
             <ul class="nav-links">
-                <li><a href="index.html#features">Features</a></li>
-                <li><a href="index.html#about">About</a></li>
                 <li><a href="index.html#contact">Contact</a></li>
                 <li><a href="login.php">Login</a></li>
                 <li><a href="registration.php">Register</a></li>
@@ -133,13 +131,6 @@
 
 </body>
 </html>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - CAANZ</title>
-    <style>
         * {
             margin: 0;
             padding: 0;
